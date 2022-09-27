@@ -24,6 +24,16 @@ app.get('/user', (req, res) => {
     })
 })
 
+app.get('/check', (req, res) => {
+    const { ms, pais } = req.query 
+    res.json({
+        check: `/cobot microservice check_consistency --service ${ms} --country ${pais}`,
+        fix: `/cobot microservice fix --service ${ms} --country ${pais}`,
+    })
+})
+
+// usuarios
+
 app.get('/users', (req, res) => {
     let url = 'https://dummyjson.com/users'
     axios.get(url)
@@ -37,10 +47,55 @@ app.get('/users/:id', (req, res) => {
     axios.get(url)
         .then(response => {
             res.json({
-                nombre: response.data.firstName,
-                apellido: response.data.lastName,
+                id: response.data.id,
+                img: response.data.image,
+                firstName: response.data.firstName,
+                lastName: response.data.lastName,
+                age: response.data.age,
+                gender: response.data.gender,
+                contact : {
+                    mail: response.data.email,
+                    phone: response.data.phone,
+                }
             })
         })
+})
+
+app.get('/users/:id/posts', (req, res) => {
+    const { id } = req.params
+    let url = `https://dummyjson.com/posts/${id}`
+    axios.get(url)
+        .then(response => {
+            res.json({
+                id: response.data.id,
+                img: response.data.image,
+                firstName: response.data.firstName,
+                lastName: response.data.lastName,
+                age: response.data.age,
+                gender: response.data.gender,
+                contact : {
+                    mail: response.data.email,
+                    phone: response.data.phone,
+                }
+            })
+        })
+})
+
+// posts
+
+app.get('/posts', (req, res) => {
+    let url = 'https://dummyjson.com/posts'
+    axios.get(url)
+        .then(response => res.send(response.data))
+        .catch(err => res.json(err))
+})
+
+app.get('/posts/:id', (req, res) => {
+    const { id } = req.params
+    let url = `https://dummyjson.com/posts/${id}`
+    axios.get(url)
+        .then(response => res.send(response.data))
+        .catch(err => res.json(err))
 })
 
 app.listen(port, () => {
